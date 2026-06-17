@@ -6,6 +6,7 @@ namespace Microsoft.eServices.EDocument;
 
 using Microsoft.eServices.EDocument.Processing.Import;
 using Microsoft.eServices.EDocument.Processing.Import.Purchase;
+using Microsoft.eServices.EDocument.Processing.Message;
 using Microsoft.EServices.EDocument.Processing.Import.Sales;
 using Microsoft.Foundation.Attachment;
 using Microsoft.Purchases.Vendor;
@@ -196,6 +197,12 @@ page 6105 "Inbound E-Documents"
             {
                 Caption = 'E-Document Details';
                 SubPageLink = "E-Document Entry No" = field("Entry No");
+                ShowFilter = false;
+            }
+            part(EDocMessages; "E-Document Messages Part")
+            {
+                Caption = 'Messages';
+                SubPageLink = "E-Document Entry No." = field("Entry No");
                 ShowFilter = false;
             }
         }
