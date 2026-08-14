@@ -9,6 +9,7 @@ using Microsoft.Foundation.Reporting;
 using Microsoft.Inventory.Transfer;
 using Microsoft.Purchases.Document;
 using Microsoft.Purchases.History;
+using Microsoft.Purchases.Vendor;
 using Microsoft.Sales.Document;
 using Microsoft.Sales.FinanceCharge;
 using Microsoft.Sales.History;
@@ -316,6 +317,7 @@ codeunit 6102 "E-Doc. Export"
         SalesHeader: Record "Sales Header";
         PurchHeader: Record "Purchase Header";
         FinanceChargeMemoHeader: Record "Finance Charge Memo Header";
+        Vendor: Record Vendor;
         SalesDocumentType: Enum "Sales Document Type";
         PurchDocumentType: Enum "Purchase Document Type";
         RemainingAmount, InterestAmount, AdditionalFee, VATAmount : Decimal;
@@ -433,6 +435,14 @@ codeunit 6102 "E-Doc. Export"
                     EDocument."Document No." := SourceDocumentHeader.Field(PurchHeader.FieldNo("No.")).Value;
                     EDocument."Bill-to/Pay-to No." := SourceDocumentHeader.Field(PurchHeader.FieldNo("Pay-to Vendor No.")).Value;
                     EDocument."Bill-to/Pay-to Name" := SourceDocumentHeader.Field(PurchHeader.FieldNo("Pay-to Name")).Value;
+
+                    if Vendor.Get(EDocument."Bill-to/Pay-to No.") and Vendor."Self-Billing Agreement" then
+                        case EDocument."Document Type" of
+                            EDocument."Document Type"::"Purchase Invoice":
+                                EDocument."Document Type" := EDocument."Document Type"::"Self-Billed Purchase Invoice";
+                            EDocument."Document Type"::"Purchase Credit Memo":
+                                EDocument."Document Type" := EDocument."Document Type"::"Self-Billed Purch. Cr. Memo";
+                        end;
                     EDocument."Posting Date" := SourceDocumentHeader.Field(PurchHeader.FieldNo("Posting Date")).Value;
                     EDocument."Document Date" := SourceDocumentHeader.Field(PurchHeader.FieldNo("Document Date")).Value;
                     EDocument."Due Date" := SourceDocumentHeader.Field(PurchHeader.FieldNo("Due Date")).Value;
